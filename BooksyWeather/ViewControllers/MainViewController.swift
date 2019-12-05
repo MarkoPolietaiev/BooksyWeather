@@ -12,13 +12,55 @@ import Alamofire
 
 class MainViewController: UIViewController, CLLocationManagerDelegate {
     
+    let weatherView = PresentWeatherView()
+    let tableView = UITableView()
+    let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.backgroundColor = .lightGray
+        return cv
+    }()
+    var safeArea: UILayoutGuide!
+
+    
     let locationManager = CLLocationManager()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .systemBackground
+        view.backgroundColor = .systemBackground
+        safeArea = view.layoutMarginsGuide
         startTest()
-        view.addSubview(PresentWeatherView(frame: CGRect(x: self.view.center.x - 100, y: 10, width: 200, height: 200)))
+        setupWeatherView()
+        setupCollectionView()
+        setupTableView()
+    }
+    
+    func setupWeatherView() {
+        view.addSubview(weatherView)
+        weatherView.intrinsicContentSize
+        weatherView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 10).isActive = true
+        weatherView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+    }
+    
+    func setupCollectionView() {
+        view.addSubview(collectionView)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.topAnchor.constraint(equalTo: weatherView.bottomAnchor, constant: 15).isActive = true
+        collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        collectionView.heightAnchor.constraint(equalToConstant: 150).isActive = true
+        collectionView.backgroundColor = .gray
+    }
+    
+    func setupTableView() {
+        view.addSubview(tableView)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 15).isActive = true
+        tableView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        tableView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        tableView.backgroundColor = .gray
     }
 }
 
