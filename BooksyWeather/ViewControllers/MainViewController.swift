@@ -16,14 +16,9 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .red
-        
+        self.view.backgroundColor = .systemBackground
         startTest()
-//        let collectionViewLayout = UICollectionViewLayout()
-//        let collectionView = UICollectionView(frame: CGRect(x: 0, y: 0, width: 50, height: 50), collectionViewLayout: collectionViewLayout)
-//        collectionView.backgroundColor = .yellow
-//        view.addSubview(collectionView)
-        view.addSubview(PresentWeatherView(frame: CGRect(x: 0, y: 0, width: 300, height: 300)))
+        view.addSubview(PresentWeatherView(frame: CGRect(x: self.view.center.x - 100, y: 10, width: 200, height: 200)))
     }
 }
 

@@ -31,19 +31,19 @@ class PresentWeatherView: UIView {
         NSLayoutConstraint.activate([
             //layout for main Label
             temperatureLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            temperatureLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            temperatureLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -30),
             
             //layout for cloudness Label
             cloudnessLabel.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: 10),
             cloudnessLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             cloudnessLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            cloudnessLabel.heightAnchor.constraint(equalToConstant: 35),
+            cloudnessLabel.heightAnchor.constraint(equalToConstant: 25),
             
             //layour for feeling Label
             feelingLabel.topAnchor.constraint(equalTo: cloudnessLabel.bottomAnchor, constant: 10),
             feelingLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             feelingLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            feelingLabel.heightAnchor.constraint(equalToConstant: 35)
+            feelingLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor)
         ])
     }
     
@@ -80,6 +80,6 @@ class PresentWeatherView: UIView {
     
     override var intrinsicContentSize: CGSize {
       //preferred content size, calculate it if some internal state changes
-      return CGSize(width: 300, height: 300)
+      return CGSize(width: 200, height: 200)
     }
 }
