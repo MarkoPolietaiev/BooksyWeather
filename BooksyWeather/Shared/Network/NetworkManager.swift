@@ -10,29 +10,85 @@ import UIKit
 import Alamofire
 
 class NetworkManager: NSObject {
-    private enum NetworkPath: String {
-        case city
-        case location
-        
-        static let baseURL: String = "http://api.openweathermap.org/data/2.5/weather"
-        static let apiKey: String = "6633138b3f5fa2f95efd7ac4246baa2f"
-        
-        var url: String {
-            return NetworkPath.baseURL + self.rawValue + NetworkPath.apiKey
-        }
+    
+    private static let sharedInstance: NetworkManager = {
+        let instanse = NetworkManager()
+        return instanse
+    }()
+    
+    static func shared() -> NetworkManager {
+        return sharedInstance
     }
     
-    func getWeather(city: String) {
-        let weatherRequestURL = "\(NetworkPath.baseURL)?APPID=\(NetworkPath.apiKey)&q=\(city)"
-        AF.request(weatherRequestURL).response { response in
-            guard let data = response.data else { return }
-            do {
-                print("Raw data:\n\(data)\n")
-                let dataString = String(data: data, encoding: String.Encoding.utf8)
-                print("Human-readable data:\n\(dataString ?? "")")
-            } catch let error {
-                print(error)
+    let baseURL: String = "http://api.openweathermap.org/data/2.5/weather"
+    let apiKey: String = "6633138b3f5fa2f95efd7ac4246baa2f"
+    
+
+}
+
+//MARK: Requests
+extension NetworkManager {
+    func getWeatherByCity(city: String) -> Location? {
+        let weatherRequestURL = "\(baseURL)?APPID=\(apiKey)&q=\(city)"
+        var location: Location?
+        AF.request(weatherRequestURL).validate().response {
+            response in
+            if let error = response.error {
+                print(error.localizedDescription)
+            } else {
+                guard let data = response.data else { return }
+                            let decoder = JSONDecoder()
+                do {
+                    location = try decoder.decode(Location.self, from: data)
+                    print(location!)
+                }  catch let DecodingError.dataCorrupted(context) {
+                    print(context)
+                } catch let DecodingError.keyNotFound(key, context) {
+                    print("Key '\(key)' not found:", context.debugDescription)
+                    print("codingPath:", context.codingPath)
+                } catch let DecodingError.valueNotFound(value, context) {
+                    print("Value '\(value)' not found:", context.debugDescription)
+                    print("codingPath:", context.codingPath)
+                } catch let DecodingError.typeMismatch(type, context)  {
+                    print("Type '\(type)' mismatch:", context.debugDescription)
+                    print("codingPath:", context.codingPath)
+                } catch {
+                    print("error: ", error)
+                }
             }
         }
+        return location
+    }
+    
+    func getWeatherByLocation(longtitude: Double, latitude: Double) -> Location? {
+        let weatherRequestURL = "\(baseURL)?lat=\(latitude)&lon=\(longtitude)&cnt=1\(apiKey)&APPID=\(apiKey)"
+        var location: Location?
+        AF.request(weatherRequestURL).response {
+            response in
+            if let error = response.error {
+                print(error.localizedDescription)
+            } else {
+                guard let data = response.data else { return }
+                            let decoder = JSONDecoder()
+                do {
+                    location = try decoder.decode(Location.self, from: data)
+                    print(location!)
+                }  catch let DecodingError.dataCorrupted(context) {
+                    print(context)
+                } catch let DecodingError.keyNotFound(key, context) {
+                    print("Key '\(key)' not found:", context.debugDescription)
+                    print("codingPath:", context.codingPath)
+                } catch let DecodingError.valueNotFound(value, context) {
+                    print("Value '\(value)' not found:", context.debugDescription)
+                    print("codingPath:", context.codingPath)
+                } catch let DecodingError.typeMismatch(type, context)  {
+                    print("Type '\(type)' mismatch:", context.debugDescription)
+                    print("codingPath:", context.codingPath)
+                } catch {
+                    print("error: ", error)
+                }
+            }
+        }
+        return location
     }
 }

@@ -50,6 +50,7 @@ class PresentWeatherView: UIView {
     lazy var temperatureLabel: UILabel = {
       let title = UILabel()
       title.font = UIFont.systemFont(ofSize: 45, weight: .medium)
+      title.tintColor = .label
       title.text = "0"
       title.textAlignment = .center
       title.translatesAutoresizingMaskIntoConstraints = false
@@ -59,6 +60,7 @@ class PresentWeatherView: UIView {
     lazy var cloudnessLabel: UILabel = {
         let title = UILabel()
         title.font = UIFont.systemFont(ofSize: 20, weight: .regular)
+        title.tintColor = .secondaryLabel
         title.text = "cloudy"
         title.textAlignment = .center
         title.translatesAutoresizingMaskIntoConstraints = false
@@ -68,6 +70,7 @@ class PresentWeatherView: UIView {
     lazy var feelingLabel: UILabel = {
         let title = UILabel()
         title.font = UIFont.systemFont(ofSize: 20, weight: .regular)
+        title.tintColor = .secondaryLabel
         title.text = "feels like -4"
         title.textAlignment = .center
         title.translatesAutoresizingMaskIntoConstraints = false

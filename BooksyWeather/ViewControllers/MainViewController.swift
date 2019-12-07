@@ -12,6 +12,14 @@ import Alamofire
 
 class MainViewController: UIViewController, CLLocationManagerDelegate {
     
+    var viewModel: MainViewModel! {
+        didSet {
+            navigationItem.title = viewModel.location.name
+            //citynamelabel = viewModel.location.name
+            //...
+        }
+    }
+    
     let weatherView = PresentWeatherView()
     let tableView = UITableView()
     let collectionView: UICollectionView = {
@@ -23,24 +31,31 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
     }()
     var safeArea: UILayoutGuide!
 
-    
+    var networkManager = NetworkManager.shared()
     let locationManager = CLLocationManager()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func loadView() {
+        super.loadView()
+        let location = Location()
+        viewModel = MainViewModel(location: location)
+        viewModel.mainViewModelDelegate = self
         view.backgroundColor = .systemBackground
         safeArea = view.layoutMarginsGuide
         startTest()
-        setupWeatherView()
-        setupCollectionView()
-        setupTableView()
+        setupNavigation()
+        setupViews()
     }
     
     func setupWeatherView() {
         view.addSubview(weatherView)
-        weatherView.intrinsicContentSize
+        weatherView.translatesAutoresizingMaskIntoConstraints = false
         weatherView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 10).isActive = true
         weatherView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
     }
     
     func setupCollectionView() {
@@ -60,7 +75,42 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
         tableView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         tableView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        tableView.backgroundColor = .gray
+        tableView.backgroundColor = .gray  
+    }
+    
+    fileprivate func setupViews() {
+        setupWeatherView()
+        setupCollectionView()
+        setupTableView()
+    }
+    
+    fileprivate func setupNavigation() {
+        navigationItem.title = "Your City"
+        let chooseLocationBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(chooseLocationClicked))
+        let settingsBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(settingsClicked))
+        navigationItem.setLeftBarButton(chooseLocationBarButtonItem, animated: true)
+        navigationItem.setRightBarButton(settingsBarButtonItem, animated: true)
+    }
+    
+    @objc fileprivate func chooseLocationClicked() {
+        viewModel.locationsClicked()
+    }
+    
+    @objc fileprivate func settingsClicked() {
+        viewModel.settingsClicked()
+    }
+}
+
+extension MainViewController: MainViewModelDelegate {
+    func didClickedLocationsButton(_ viewController: UIViewController) {
+        let viewController = LocationsViewController() as UIViewController
+        viewController.modalPresentationStyle = .pageSheet
+        viewController.modalTransitionStyle = .coverVertical
+        present(viewController, animated: true, completion: nil)
+    }
+    
+    func didClickedSettingsButton(_ viewController: UIViewController) {
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }
 
@@ -82,15 +132,8 @@ extension MainViewController {
     
     func getWeatherByLocation() {
         guard let locValue: CLLocationCoordinate2D = locationManager.location?.coordinate else { return }
-        AF.request("http://api.openweathermap.org/data/2.5/find?lat=\(locValue.latitude)&lon=\(locValue.longitude)&cnt=1&appid=6633138b3f5fa2f95efd7ac4246baa2f").response { responde in
-            guard let data = responde.data else { return }
-            do {
-                let dataString = String(data: data, encoding: String.Encoding.utf8)
-                print("Human-readable data:\n\(dataString ?? "")")
-            } catch let error {
-                print(error)
-            }
-        }
+        let newLocation = networkManager.getWeatherByLocation(longtitude: Double(locValue.longitude), latitude: Double(locValue.latitude.binade))
+        print(newLocation)
     }
 }
 

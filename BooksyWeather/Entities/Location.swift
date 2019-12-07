@@ -7,7 +7,11 @@
 //
 
 import Foundation
+import CoreLocation
 
-class Location: NSObject {
+struct Location: Codable {
+    
     var name: String!
+    
+    
 }
