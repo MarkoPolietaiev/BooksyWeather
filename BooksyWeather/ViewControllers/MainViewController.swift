@@ -14,7 +14,7 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
     
     var viewModel: MainViewModel! {
         didSet {
-            navigationItem.title = viewModel.location.name
+            navigationItem.title = viewModel.location.city.name
             //citynamelabel = viewModel.location.name
             //...
         }
@@ -40,14 +40,15 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
     
     override func loadView() {
         super.loadView()
-        let location = Location()
-        viewModel = MainViewModel(location: location)
-        viewModel.mainViewModelDelegate = self
-        view.backgroundColor = .systemBackground
-        safeArea = view.layoutMarginsGuide
-        startTest()
-        setupNavigation()
-        setupViews()
+        var location = networkManager.getWeatherByCity(city: "Warszawa")
+//        viewModel = MainViewModel(location: location!)
+        
+//        viewModel.mainViewModelDelegate = self
+//        view.backgroundColor = .systemBackground
+//        safeArea = view.layoutMarginsGuide
+//        startTest()
+//        setupNavigation()
+//        setupViews()
     }
     
     func setupWeatherView() {
@@ -133,7 +134,7 @@ extension MainViewController {
     func getWeatherByLocation() {
         guard let locValue: CLLocationCoordinate2D = locationManager.location?.coordinate else { return }
         let newLocation = networkManager.getWeatherByLocation(longtitude: Double(locValue.longitude), latitude: Double(locValue.latitude.binade))
-        print(newLocation)
+        print(newLocation!)
     }
 }
 

@@ -11,7 +11,9 @@ import CoreLocation
 
 struct Location: Codable {
     
-    var name: String!
-    
-    
+    let cod: String
+    let message: Int
+    let cnt: Int
+    let list: [List]
+    let city: City
 }

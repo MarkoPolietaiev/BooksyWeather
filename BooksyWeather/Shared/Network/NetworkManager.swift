@@ -20,7 +20,7 @@ class NetworkManager: NSObject {
         return sharedInstance
     }
     
-    let baseURL: String = "http://api.openweathermap.org/data/2.5/weather"
+    let baseURL: String = "http://api.openweathermap.org/data/2.5/forecast"
     let apiKey: String = "6633138b3f5fa2f95efd7ac4246baa2f"
     
 
@@ -28,8 +28,8 @@ class NetworkManager: NSObject {
 
 //MARK: Requests
 extension NetworkManager {
-    func getWeatherByCity(city: String) -> Location? {
-        let weatherRequestURL = "\(baseURL)?APPID=\(apiKey)&q=\(city)"
+    func getWeatherByCity(city: String) {
+        let weatherRequestURL = "\(baseURL)?APPID=\(apiKey)&q=\(city)&units=metric"
         var location: Location?
         AF.request(weatherRequestURL).validate().response {
             response in
@@ -57,7 +57,6 @@ extension NetworkManager {
                 }
             }
         }
-        return location
     }
     
     func getWeatherByLocation(longtitude: Double, latitude: Double) -> Location? {
