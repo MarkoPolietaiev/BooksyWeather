@@ -81,8 +81,8 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     fileprivate func setupNavigation() {
-        let chooseLocationBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(chooseLocationClicked))
-        let settingsBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(settingsClicked))
+        let chooseLocationBarButtonItem = UIBarButtonItem(image: UIImage.init(named: "list"), style: .done, target: self, action: #selector(chooseLocationClicked))
+        let settingsBarButtonItem = UIBarButtonItem(image: UIImage.init(named: "settings"), style: .done, target: self, action: #selector(settingsClicked))
         navigationItem.setLeftBarButton(chooseLocationBarButtonItem, animated: true)
         navigationItem.setRightBarButton(settingsBarButtonItem, animated: true)
     }
