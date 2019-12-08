@@ -15,8 +15,8 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
     var viewModel: MainViewModel! {
         didSet {
             navigationItem.title = viewModel.location.city.name
-            weatherView.temperatureLabel.text = "\(viewModel.location.list[0].main.temp)"
-            weatherView.cloudnessLabel.text = viewModel.location.list[0].weather[0].description
+            weatherView.temperatureLabel.text = "\(viewModel.location.list[0].main.temp.rounded())"
+            weatherView.cloudnessLabel.text = viewModel.location.list[0].weather[0].description.capitalizingFirstLetter()
             //...
         }
     }
