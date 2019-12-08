@@ -32,9 +32,6 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
     }()
     var safeArea: UILayoutGuide!
 
-    private let networkManager = NetworkManager.shared()
-    let locationManager = CLLocationManager()
-
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -44,7 +41,7 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
         safeArea = view.layoutMarginsGuide
         view.backgroundColor = .systemBackground
         viewModel.mainViewModelDelegate = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "tableCellId")
+        tableView.register(TableViewCell.self, forCellReuseIdentifier: "tableCellId")
         setupNavigation()
         setupViews()
     }

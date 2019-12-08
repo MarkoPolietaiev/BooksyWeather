@@ -12,7 +12,9 @@ class TableViewCell: UITableViewCell {
     
     var list: List? {
         didSet {
-            
+            dateLabel.text = list?.dt_txt
+            weatherIcon.load(url: URL.init(string: "http://openweathermap.org/img/w/" + (list?.weather[0].icon)! + ".png")!)
+            tempLabel.text = "\(list?.main.temp ?? 0)"
         }
     }
     
