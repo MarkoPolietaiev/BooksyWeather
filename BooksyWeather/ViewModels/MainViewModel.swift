@@ -34,4 +34,8 @@ class MainViewModel {
         mainViewModelDelegate?.didClickedLocationsButton(viewController)
     }
     
+    func updateDataSource() {
+        
+    }
+    
 }

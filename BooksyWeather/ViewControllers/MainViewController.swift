@@ -15,7 +15,8 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
     var viewModel: MainViewModel! {
         didSet {
             navigationItem.title = viewModel.location.city.name
-            //citynamelabel = viewModel.location.name
+            weatherView.temperatureLabel.text = "\(viewModel.location.list[0].main.temp)"
+            weatherView.cloudnessLabel.text = viewModel.location.list[0].weather[0].description
             //...
         }
     }
@@ -31,7 +32,7 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
     }()
     var safeArea: UILayoutGuide!
 
-    var networkManager = NetworkManager.shared()
+    private let networkManager = NetworkManager.shared()
     let locationManager = CLLocationManager()
 
     override func viewDidLoad() {
@@ -40,15 +41,12 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
     
     override func loadView() {
         super.loadView()
-        var location = networkManager.getWeatherByCity(city: "Warszawa")
-//        viewModel = MainViewModel(location: location!)
-        
-//        viewModel.mainViewModelDelegate = self
-//        view.backgroundColor = .systemBackground
-//        safeArea = view.layoutMarginsGuide
-//        startTest()
-//        setupNavigation()
-//        setupViews()
+        safeArea = view.layoutMarginsGuide
+        view.backgroundColor = .systemBackground
+        viewModel.mainViewModelDelegate = self
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "tableCellId")
+        setupNavigation()
+        setupViews()
     }
     
     func setupWeatherView() {
@@ -86,7 +84,6 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     fileprivate func setupNavigation() {
-        navigationItem.title = "Your City"
         let chooseLocationBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(chooseLocationClicked))
         let settingsBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(settingsClicked))
         navigationItem.setLeftBarButton(chooseLocationBarButtonItem, animated: true)
@@ -104,7 +101,7 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
 
 extension MainViewController: MainViewModelDelegate {
     func didClickedLocationsButton(_ viewController: UIViewController) {
-        let viewController = LocationsViewController() as UIViewController
+        let viewController = LocationsViewController()
         viewController.modalPresentationStyle = .pageSheet
         viewController.modalTransitionStyle = .coverVertical
         present(viewController, animated: true, completion: nil)
@@ -114,27 +111,3 @@ extension MainViewController: MainViewModelDelegate {
         navigationController?.pushViewController(viewController, animated: true)
     }
 }
-
-extension MainViewController {
-    func startTest() {
-        // Ask for Authorisation from the User.
-        self.locationManager.requestAlwaysAuthorization()
-
-        // For use in foreground
-        self.locationManager.requestWhenInUseAuthorization()
-
-        if CLLocationManager.locationServicesEnabled() {
-            locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-            locationManager.startUpdatingLocation()
-        }
-        getWeatherByLocation()
-    }
-    
-    func getWeatherByLocation() {
-        guard let locValue: CLLocationCoordinate2D = locationManager.location?.coordinate else { return }
-        let newLocation = networkManager.getWeatherByLocation(longtitude: Double(locValue.longitude), latitude: Double(locValue.latitude.binade))
-        print(newLocation!)
-    }
-}
-

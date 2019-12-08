@@ -16,14 +16,12 @@ class PresentWeatherView: UIView {
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupView()
+        fatalError("init(coder:) has not been implemented")
     }
     
     private func setupView() {
         addSubview(temperatureLabel)
         addSubview(cloudnessLabel)
-        addSubview(feelingLabel)
         setupLayout()
     }
     
@@ -37,13 +35,7 @@ class PresentWeatherView: UIView {
             cloudnessLabel.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: 10),
             cloudnessLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             cloudnessLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            cloudnessLabel.heightAnchor.constraint(equalToConstant: 25),
-            
-            //layour for feeling Label
-            feelingLabel.topAnchor.constraint(equalTo: cloudnessLabel.bottomAnchor, constant: 10),
-            feelingLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            feelingLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            feelingLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+            cloudnessLabel.heightAnchor.constraint(equalToConstant: 25)
         ])
     }
     
@@ -67,22 +59,12 @@ class PresentWeatherView: UIView {
         return title
     }()
     
-    lazy var feelingLabel: UILabel = {
-        let title = UILabel()
-        title.font = UIFont.systemFont(ofSize: 20, weight: .regular)
-        title.tintColor = .secondaryLabel
-        title.text = "feels like -4"
-        title.textAlignment = .center
-        title.translatesAutoresizingMaskIntoConstraints = false
-        return title
-    }()
-    
     override class var requiresConstraintBasedLayout: Bool {
       return true
     }
     
     override var intrinsicContentSize: CGSize {
       //preferred content size, calculate it if some internal state changes
-      return CGSize(width: 200, height: 200)
+      return CGSize(width: 150, height: 150)
     }
 }

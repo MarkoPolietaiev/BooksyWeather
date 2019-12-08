@@ -19,11 +19,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = (scene as? UIWindowScene) else { return }
         self.window = UIWindow(windowScene: windowScene)
-        let rootViewCotroller = MainViewController() as UIViewController
-        let navigationController = UINavigationController(rootViewController: rootViewCotroller)
-        navigationController.navigationBar.isTranslucent = false
-        self.window?.rootViewController = navigationController
-        self.window?.makeKeyAndVisible()
+        let rootViewCotroller = MainViewController()
+        NetworkManager.shared().getWeatherByCity(city: "Warszawa") { (location, error) in
+            if let error = error {
+                //display error
+                print(error)
+            } else if let location = location{
+                let mainViewModel = MainViewModel(location: location)
+                rootViewCotroller.viewModel = mainViewModel
+                let navigationController = UINavigationController(rootViewController: rootViewCotroller)
+                       navigationController.navigationBar.isTranslucent = false
+                       self.window?.rootViewController = navigationController
+                       self.window?.makeKeyAndVisible()
+            }
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

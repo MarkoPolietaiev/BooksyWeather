@@ -28,19 +28,22 @@ class NetworkManager: NSObject {
 
 //MARK: Requests
 extension NetworkManager {
-    func getWeatherByCity(city: String) {
+    
+    typealias WebServiceResponse = (Location?, Error?) -> Void
+    
+    func getWeatherByCity(city: String, completion: @escaping WebServiceResponse) {
         let weatherRequestURL = "\(baseURL)?APPID=\(apiKey)&q=\(city)&units=metric"
         var location: Location?
         AF.request(weatherRequestURL).validate().response {
             response in
             if let error = response.error {
-                print(error.localizedDescription)
+                completion(nil, error)
             } else {
                 guard let data = response.data else { return }
                             let decoder = JSONDecoder()
                 do {
                     location = try decoder.decode(Location.self, from: data)
-                    print(location!)
+                    completion(location, nil)
                 }  catch let DecodingError.dataCorrupted(context) {
                     print(context)
                 } catch let DecodingError.keyNotFound(key, context) {
@@ -54,24 +57,25 @@ extension NetworkManager {
                     print("codingPath:", context.codingPath)
                 } catch {
                     print("error: ", error)
+                    completion(nil, error)
                 }
             }
         }
     }
     
-    func getWeatherByLocation(longtitude: Double, latitude: Double) -> Location? {
+    func getWeatherByLocation(longtitude: Double, latitude: Double, completion: @escaping WebServiceResponse){
         let weatherRequestURL = "\(baseURL)?lat=\(latitude)&lon=\(longtitude)&cnt=1\(apiKey)&APPID=\(apiKey)"
         var location: Location?
-        AF.request(weatherRequestURL).response {
+        AF.request(weatherRequestURL).validate().response {
             response in
             if let error = response.error {
-                print(error.localizedDescription)
+                completion(nil, error)
             } else {
                 guard let data = response.data else { return }
                             let decoder = JSONDecoder()
                 do {
                     location = try decoder.decode(Location.self, from: data)
-                    print(location!)
+                    completion(location, nil)
                 }  catch let DecodingError.dataCorrupted(context) {
                     print(context)
                 } catch let DecodingError.keyNotFound(key, context) {
@@ -85,9 +89,9 @@ extension NetworkManager {
                     print("codingPath:", context.codingPath)
                 } catch {
                     print("error: ", error)
+                    completion(nil, error)
                 }
             }
         }
-        return location
     }
 }
