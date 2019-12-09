@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 
 protocol MainViewModelDelegate {
-    func didClickedSettingsButton(_ viewController: UIViewController)
     func didClickedLocationsButton(_ viewController: UIViewController)
 }
 
@@ -22,11 +21,6 @@ class MainViewModel {
     
     init(location: Location) {
         self.location = location
-    }
-    
-    func settingsClicked() {
-        let viewController = SettingsViewController() as UIViewController
-        mainViewModelDelegate?.didClickedSettingsButton(viewController)
     }
     
     func locationsClicked() {

@@ -8,7 +8,6 @@
 
 import UIKit
 import CoreLocation
-import Alamofire
 
 class MainViewController: UIViewController, CLLocationManagerDelegate {
     
@@ -90,19 +89,13 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     fileprivate func setupNavigation() {
-        let chooseLocationBarButtonItem = UIBarButtonItem(image: UIImage.init(named: "list"), style: .done, target: self, action: #selector(chooseLocationClicked))
-        let settingsBarButtonItem = UIBarButtonItem(image: UIImage.init(named: "settings"), style: .done, target: self, action: #selector(settingsClicked))
+        let chooseLocationBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "list"), style: .done, target: self, action: #selector(chooseLocationClicked))
         navigationItem.setLeftBarButton(chooseLocationBarButtonItem, animated: true)
-        navigationItem.setRightBarButton(settingsBarButtonItem, animated: true)
         navigationController?.navigationBar.backgroundColor = .systemBackground
     }
     
     @objc fileprivate func chooseLocationClicked() {
         viewModel.locationsClicked()
-    }
-    
-    @objc fileprivate func settingsClicked() {
-        viewModel.settingsClicked()
     }
 }
 
@@ -111,11 +104,9 @@ extension MainViewController: MainViewModelDelegate {
         let viewController = LocationsViewController()
         viewController.modalPresentationStyle = .pageSheet
         viewController.modalTransitionStyle = .coverVertical
+        let viewModel = LocationsViewModel.init(locations: [self.viewModel.location])
+        viewController.viewModel = viewModel
         present(viewController, animated: true, completion: nil)
-    }
-    
-    func didClickedSettingsButton(_ viewController: UIViewController) {
-        navigationController?.pushViewController(viewController, animated: true)
     }
 }
 

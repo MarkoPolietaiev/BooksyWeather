@@ -8,6 +8,22 @@
 
 import Foundation
 
+protocol LocationsViewModelDelegate {
+//    func didSelectLocation(_ location: Location)
+}
+
 class LocationsViewModel {
+    
+    var locationsViewModelDelegate: LocationsViewModelDelegate?
+    
+    var locations: [Location] = []
+    
+    init(locations: [Location]) {
+        self.locations = locations
+    }
+    
+    func didSelectLocation() {
+//        locationsViewModelDelegate?.didSelectLocation()
+    }
 
 }
