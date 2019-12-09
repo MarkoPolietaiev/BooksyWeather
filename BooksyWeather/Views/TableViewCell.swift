@@ -12,9 +12,9 @@ class TableViewCell: UITableViewCell {
     
     var list: List? {
         didSet {
-            dateLabel.text = list?.dt_txt
+            dateLabel.text = getProperDateString(list?.dt_txt)
             weatherIcon.load(url: URL.init(string: "http://openweathermap.org/img/w/" + (list?.weather[0].icon)! + ".png")!)
-            tempLabel.text = "\(list?.main.temp ?? 0)"
+            tempLabel.text = "\(list?.main.temp.rounded() ?? 0)º"
         }
     }
     
@@ -29,9 +29,9 @@ class TableViewCell: UITableViewCell {
     
     lazy var dateLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 22, weight: .medium)
+        label.font = UIFont.systemFont(ofSize: 15, weight: .medium)
         label.tintColor = .label
-        label.textAlignment = .right
+        label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -45,12 +45,20 @@ class TableViewCell: UITableViewCell {
     
     lazy var tempLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 22, weight: .medium)
+        label.font = UIFont.systemFont(ofSize: 18, weight: .medium)
         label.tintColor = .label
         label.textAlignment = .right
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
+    private func getProperDateString(_ dateText: String?) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-mm-dd HH:mm:ss"
+        let date = dateFormatter.date(from: dateText!)!
+        dateFormatter.dateFormat = "EEEE"
+        return dateFormatter.string(from: date)
+    }
     
     private func setupView() {
         addSubview(dateLabel)
@@ -62,15 +70,16 @@ class TableViewCell: UITableViewCell {
     private func setupLayout() {
         NSLayoutConstraint.activate([
             dateLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            dateLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 10),
+            dateLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15),
+            dateLabel.widthAnchor.constraint(equalToConstant: 100),
             
             weatherIcon.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            weatherIcon.trailingAnchor.constraint(equalTo: dateLabel.leadingAnchor, constant: 15),
+            weatherIcon.leadingAnchor.constraint(equalTo: dateLabel.trailingAnchor, constant: 30),
             weatherIcon.heightAnchor.constraint(equalToConstant: 35),
             weatherIcon.widthAnchor.constraint(equalToConstant: 35),
             
             tempLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            tempLabel.trailingAnchor.constraint(equalTo: weatherIcon.leadingAnchor, constant: 25)
+            tempLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -25)
         ])
     }
     

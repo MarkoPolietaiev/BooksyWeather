@@ -65,6 +65,6 @@ class PresentWeatherView: UIView {
     
     override var intrinsicContentSize: CGSize {
       //preferred content size, calculate it if some internal state changes
-      return CGSize(width: 150, height: 150)
+      return CGSize(width: 150, height: 100)
     }
 }
