@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import CoreLocation
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, CLLocationManagerDelegate {
 
     var window: UIWindow?
 
@@ -20,7 +21,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         self.window = UIWindow(windowScene: windowScene)
         let rootViewCotroller = MainViewController()
-        NetworkManager.shared().getWeatherByCity(city: "Warszawa") { (location, error) in
+        let locationManager = CLLocationManager()
+        locationManager.requestAlwaysAuthorization()
+
+        // For use in foreground
+        locationManager.requestWhenInUseAuthorization()
+
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            locationManager.startUpdatingLocation()
+        }
+        NetworkManager.shared().getWeatherByLocation(longtitude: (locationManager.location?.coordinate.longitude)!, latitude: (locationManager.location?.coordinate.latitude)!) { (location, error) in
             if let error = error {
                 //display error
                 print(error)

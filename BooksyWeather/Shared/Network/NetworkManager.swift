@@ -64,7 +64,7 @@ extension NetworkManager {
     }
     
     func getWeatherByLocation(longtitude: Double, latitude: Double, completion: @escaping WebServiceResponse){
-        let weatherRequestURL = "\(baseURL)?lat=\(latitude)&lon=\(longtitude)&cnt=1\(apiKey)&APPID=\(apiKey)"
+        let weatherRequestURL = "\(baseURL)?lat=\(latitude)&lon=\(longtitude)&units=metric&APPID=\(apiKey)"
         var location: Location?
         AF.request(weatherRequestURL).validate().response {
             response in

@@ -31,6 +31,7 @@
 		615A7105239D8F7800701244 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615A7104239D8F7800701244 /* TableViewCell.swift */; };
 		615A7108239D94A200701244 /* UIImageView+load.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615A7107239D94A200701244 /* UIImageView+load.swift */; };
 		615A710A239D9A1800701244 /* String+capitalized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615A7109239D9A1800701244 /* String+capitalized.swift */; };
+		615A710C239DDCE000701244 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615A710B239DDCE000701244 /* CollectionViewCell.swift */; };
 		615E4B9C239B17F3003EF6FC /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615E4B9B239B17F3003EF6FC /* MainViewModel.swift */; };
 		615E4B9E239B2405003EF6FC /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615E4B9D239B2405003EF6FC /* SettingsViewController.swift */; };
 		615E4BA0239B240F003EF6FC /* LocationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615E4B9F239B240F003EF6FC /* LocationsViewController.swift */; };
@@ -90,6 +91,7 @@
 		615A7104239D8F7800701244 /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
 		615A7107239D94A200701244 /* UIImageView+load.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+load.swift"; sourceTree = "<group>"; };
 		615A7109239D9A1800701244 /* String+capitalized.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+capitalized.swift"; sourceTree = "<group>"; };
+		615A710B239DDCE000701244 /* CollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewCell.swift; sourceTree = "<group>"; };
 		615E4B9B239B17F3003EF6FC /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		615E4B9D239B2405003EF6FC /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		615E4B9F239B240F003EF6FC /* LocationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationsViewController.swift; sourceTree = "<group>"; };
@@ -253,6 +255,7 @@
 			children = (
 				611AB199239991670047A065 /* PresentWeatherView.swift */,
 				615A7104239D8F7800701244 /* TableViewCell.swift */,
+				615A710B239DDCE000701244 /* CollectionViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -537,6 +540,7 @@
 			files = (
 				6126AD52239D592E00AFB930 /* Main.swift in Sources */,
 				6126AD56239D595500AFB930 /* Weather.swift in Sources */,
+				615A710C239DDCE000701244 /* CollectionViewCell.swift in Sources */,
 				611AB19A239991670047A065 /* PresentWeatherView.swift in Sources */,
 				615E4BA0239B240F003EF6FC /* LocationsViewController.swift in Sources */,
 				6126AD54239D594500AFB930 /* Sys.swift in Sources */,

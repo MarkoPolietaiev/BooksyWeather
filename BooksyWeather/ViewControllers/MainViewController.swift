@@ -17,7 +17,6 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
             navigationItem.title = viewModel.location.city.name
             weatherView.temperatureLabel.text = "\(viewModel.location.list[0].main.temp.rounded())º"
             weatherView.cloudnessLabel.text = viewModel.location.list[0].weather[0].description.capitalizingFirstLetter()
-            //...
         }
     }
     
@@ -26,6 +25,8 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
     let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: 50, height: 80)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.backgroundColor = .lightGray
         return cv
@@ -50,7 +51,6 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
         weatherView.translatesAutoresizingMaskIntoConstraints = false
         weatherView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 25).isActive = true
         weatherView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        
     }
     
     func setupCollectionView() {
@@ -60,9 +60,11 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
         collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         collectionView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        collectionView.backgroundColor = .gray
+        collectionView.backgroundColor = .clear
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: "collectionCellId")
     }
     
     func setupTableView() {
@@ -77,6 +79,7 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.allowsSelection = false
+        tableView.showsVerticalScrollIndicator = false
         tableView.register(TableViewCell.self, forCellReuseIdentifier: "tableCellId")
     }
     
@@ -144,8 +147,10 @@ extension MainViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        //return first 8 items from list
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCellId", for: indexPath) as? CollectionViewCell else {
+            fatalError("Unable to create cell!")
+        }
+        cell.list = viewModel.location.list[indexPath.row]
+        return cell
     }
-    
-    
 }
