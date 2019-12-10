@@ -26,9 +26,9 @@
 		<true/>
 	</dict>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Test</string>
+	<string>Location is needed for the forecast.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Test</string>
+	<string>Location is needed for the forecast.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
