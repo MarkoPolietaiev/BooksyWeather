@@ -9,7 +9,7 @@
 import UIKit
 import CoreLocation
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate, CLLocationManagerDelegate {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
@@ -22,21 +22,27 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, CLLocationManagerDelega
         self.window = UIWindow(windowScene: windowScene)
         let rootViewCotroller = MainViewController()
         let locationManager = CLLocationManager()
-        locationManager.requestAlwaysAuthorization()
-
-        // For use in foreground
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
         locationManager.requestWhenInUseAuthorization()
-
-        if CLLocationManager.locationServicesEnabled() {
-            locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-            locationManager.startUpdatingLocation()
+        // after showing the permission dialog, the program will continue executing the next line before the user has tap 'Allow' or 'Disallow'
+        
+        // if previously user has allowed the location permission, then request location
+        if(CLLocationManager.authorizationStatus() == .authorizedWhenInUse || CLLocationManager.authorizationStatus() == .authorizedAlways){
+            locationManager.requestLocation()
         }
         NetworkManager.shared().getWeatherByLocation(longtitude: (locationManager.location?.coordinate.longitude)!, latitude: (locationManager.location?.coordinate.latitude)!) { (location, error) in
             if let error = error {
                 //display error
                 print(error)
             } else if let location = location{
+                let array:[Location] = [location]
+                let encoder = JSONEncoder()
+                if let encoded = try? encoder.encode(array) {
+                    let userDefaults = UserDefaults.standard
+                    userDefaults.set(encoded, forKey: "savedLocations")
+                }
+                
                 let mainViewModel = MainViewModel(location: location)
                 rootViewCotroller.viewModel = mainViewModel
                 let navigationController = UINavigationController(rootViewController: rootViewCotroller)
@@ -74,7 +80,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, CLLocationManagerDelega
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
+}
 
-
+extension SceneDelegate: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        print("location updated")
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error)
+    }
 }
 

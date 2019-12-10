@@ -30,10 +30,12 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
         cv.backgroundColor = .lightGray
         return cv
     }()
+    
     var safeArea: UILayoutGuide!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "updateLocation"), object: nil, queue: nil, using: updateViews)
     }
     
     override func loadView() {
@@ -96,6 +98,16 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
     
     @objc fileprivate func chooseLocationClicked() {
         viewModel.locationsClicked()
+    }
+    
+    fileprivate func updateViews(notification: Notification) -> Void{
+        guard let location = notification.userInfo!["location"] as? Location else {return}
+        viewModel.location = location
+        self.collectionView.reloadData()
+        self.tableView.reloadData()
+        navigationItem.title = viewModel.location.city.name
+        weatherView.temperatureLabel.text = "\(viewModel.location.list[0].main.temp.rounded())º"
+        weatherView.cloudnessLabel.text = viewModel.location.list[0].weather[0].description.capitalizingFirstLetter()
     }
 }
 

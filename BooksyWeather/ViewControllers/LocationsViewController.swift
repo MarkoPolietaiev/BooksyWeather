@@ -62,17 +62,50 @@ class LocationsViewController: UIViewController {
     }
     
     @objc func addButtonClicked() {
-        
+        viewModel.addLocation()
     }
 }
 
 extension LocationsViewController: LocationsViewModelDelegate {
+    func didSelectLocation() {
+        self.dismiss(animated: true, completion: nil)
+    }
     
+    func deletedLocation(indexPath: IndexPath) {
+        tableView.deleteRows(at: [indexPath], with: .fade)
+    }
+    
+    func reloadTableData() {
+        tableView.reloadData()
+    }
+    
+    
+    func didClickAddLocation(title: String, message: String) {
+        let alertView = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alertView.addTextField { (textField) in
+            
+        }
+        alertView.addAction(UIAlertAction.init(title: "Try", style: .default, handler: { (action) in
+            self.viewModel.searchForLocationByCity(alertView.textFields?[0].text ?? "")
+        }))
+        present(alertView, animated: true)
+    }
 }
 
 extension LocationsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
+    }
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if indexPath.row != 0 {
+            if editingStyle == .delete {
+                self.viewModel.deleteLocation(indexPath)
+            }
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        viewModel.didSelectLocation(indexPath)
     }
 }
 

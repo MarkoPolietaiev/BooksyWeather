@@ -17,7 +17,7 @@ class MainViewModel {
     
     var mainViewModelDelegate: MainViewModelDelegate?
     
-    let location: Location
+    var location: Location
     
     init(location: Location) {
         self.location = location
