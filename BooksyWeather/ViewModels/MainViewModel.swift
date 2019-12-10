@@ -19,12 +19,18 @@ class MainViewModel {
     
     var location: Location?
     
+    var isCurrentLocation: Bool = true
+    
     init(location: Location?) {
         self.location = location
     }
     
-    func setLocationByCoordinates(_ lat: Double, lon: Double) {
-        
+    func updateLocationData(_ longtitude: Double, latitude: Double, name: String) {
+        if self.isCurrentLocation {
+            getLocationByCoordinates(longtitude, latitude: latitude)
+        } else {
+            getLocationByCity(name)
+        }
     }
     
     func getLocationByCoordinates(_ longtitude: Double, latitude: Double) {
@@ -52,6 +58,32 @@ class MainViewModel {
                          userDefaults.set(encoded, forKey: "savedLocations")
                      }
                  }
+                self.mainViewModelDelegate?.locationFound(location)
+             }
+         }
+    }
+    
+    func getLocationByCity(_ name: String) {
+        NetworkManager.shared().getWeatherByCity(city: name) { (location, error) in
+             if let error = error {
+                 //display error
+                 print(error)
+             } else if let location = location {
+                //rewrite info about location by city
+//                 if let savedLocations = UserDefaults.standard.object(forKey: "savedLocations") as? Data {
+//                     let decoder = JSONDecoder()
+//                     if let loadedLocations = try? decoder.decode([Location].self, from: savedLocations) {
+//                         var newArray = loadedLocations
+//                        let oldLocation = newArray.first { (loc) -> Bool in
+//                            return loc.city.name == location.city.name
+//                        }
+//                         let encoder = JSONEncoder()
+//                         if let encoded = try? encoder.encode(newArray) {
+//                             let userDefaults = UserDefaults.standard
+//                             userDefaults.set(encoded, forKey: "savedLocations")
+//                         }
+//                     }
+//                 }
                 self.mainViewModelDelegate?.locationFound(location)
              }
          }

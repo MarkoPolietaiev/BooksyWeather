@@ -101,7 +101,9 @@ class MainViewController: UIViewController {
     
     fileprivate func setupNavigation() {
         let chooseLocationBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "list"), style: .done, target: self, action: #selector(chooseLocationClicked))
+        let refreshLocationBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "refresh"), style: .done, target: self, action: #selector(refreshLocation))
         navigationItem.setLeftBarButton(chooseLocationBarButtonItem, animated: true)
+        navigationItem.setRightBarButton(refreshLocationBarButtonItem, animated: true)
         navigationController?.navigationBar.backgroundColor = .systemBackground
     }
     
@@ -114,9 +116,15 @@ class MainViewController: UIViewController {
         present(viewController, animated: true, completion: nil)
     }
     
+    @objc fileprivate func refreshLocation() {
+        viewModel.updateLocationData(Double(locationManager.location?.coordinate.longitude ?? 0), latitude: Double(locationManager.location?.coordinate.latitude ?? 0), name: viewModel.location?.city.name ?? "")
+    }
+    
     fileprivate func updateViews(notification: Notification) -> Void{
         guard let location = notification.userInfo!["location"] as? Location else {return}
+        guard let isCurrentLocation = notification.userInfo!["isCurrentLocation"] as? Bool else {return}
         viewModel.location = location
+        viewModel.isCurrentLocation = isCurrentLocation
         self.collectionView.reloadData()
         self.tableView.reloadData()
         navigationItem.title = viewModel.location?.city.name

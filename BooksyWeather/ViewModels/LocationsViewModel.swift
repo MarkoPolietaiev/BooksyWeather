@@ -36,7 +36,7 @@ class LocationsViewModel {
             if let loadedLocations = try? decoder.decode([Location].self, from: savedLocations) {
                 let selectedLocation = loadedLocations[at.row]
                 // pass selected location to main VC
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateLocation"), object: nil, userInfo: ["location" : selectedLocation])
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "updateLocation"), object: nil, userInfo: ["location" : selectedLocation, "isCurrentLocation" : at.row == 0 ? true:false])
                 self.locationsViewModelDelegate?.didSelectLocation()
             }
         }
