@@ -9,13 +9,13 @@
 import UIKit
 import CoreLocation
 
-class MainViewController: UIViewController, CLLocationManagerDelegate {
+class MainViewController: UIViewController {
     
     var viewModel: MainViewModel! {
         didSet {
-            navigationItem.title = viewModel.location.city.name
-            weatherView.temperatureLabel.text = "\(viewModel.location.list[0].main.temp.rounded())º"
-            weatherView.cloudnessLabel.text = viewModel.location.list[0].weather[0].description.capitalizingFirstLetter()
+            navigationItem.title = viewModel.location?.city.name
+            weatherView.temperatureLabel.text = "\(viewModel.location?.list[0].main.temp.rounded() ?? 0)º"
+            weatherView.cloudnessLabel.text = viewModel.location?.list[0].weather[0].description.capitalizingFirstLetter()
         }
     }
     
@@ -32,19 +32,28 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
     }()
     
     var safeArea: UILayoutGuide!
+    let locationManager = CLLocationManager()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "updateLocation"), object: nil, queue: nil, using: updateViews)
+        self.viewModel = MainViewModel(location: nil)
+        self.safeArea = self.view.layoutMarginsGuide
+        self.viewModel.mainViewModelDelegate = self
+        self.view.backgroundColor = .systemBackground
+        setupViews()
+        setupNavigation()
     }
     
     override func loadView() {
         super.loadView()
-        safeArea = view.layoutMarginsGuide
-        view.backgroundColor = .systemBackground
-        viewModel.mainViewModelDelegate = self
-        setupNavigation()
-        setupViews()
+        locationManager.delegate = self
+        locationManager.requestAlwaysAuthorization()
+        // after showing the permission dialog, the program will continue executing the next line before the user has tap 'Allow' or 'Disallow'
+        // if previously user has allowed the location permission, then request location
+        if(CLLocationManager.authorizationStatus() == .authorizedWhenInUse || CLLocationManager.authorizationStatus() == .authorizedAlways){
+            locationManager.requestLocation()
+        }
     }
     
     func setupWeatherView() {
@@ -97,7 +106,12 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     @objc fileprivate func chooseLocationClicked() {
-        viewModel.locationsClicked()
+        let viewController = LocationsViewController()
+        viewController.modalPresentationStyle = .pageSheet
+        viewController.modalTransitionStyle = .coverVertical
+        let viewModel = LocationsViewModel.init()
+        viewController.viewModel = viewModel
+        present(viewController, animated: true, completion: nil)
     }
     
     fileprivate func updateViews(notification: Notification) -> Void{
@@ -105,22 +119,35 @@ class MainViewController: UIViewController, CLLocationManagerDelegate {
         viewModel.location = location
         self.collectionView.reloadData()
         self.tableView.reloadData()
-        navigationItem.title = viewModel.location.city.name
-        weatherView.temperatureLabel.text = "\(viewModel.location.list[0].main.temp.rounded())º"
-        weatherView.cloudnessLabel.text = viewModel.location.list[0].weather[0].description.capitalizingFirstLetter()
+        navigationItem.title = viewModel.location?.city.name
+        weatherView.temperatureLabel.text = "\(viewModel.location?.list[0].main.temp.rounded() ?? 0)º"
+        weatherView.cloudnessLabel.text = viewModel.location?.list[0].weather[0].description.capitalizingFirstLetter()
     }
 }
 
+//MARK: ViewModelDelegate
+
 extension MainViewController: MainViewModelDelegate {
-    func didClickedLocationsButton(_ viewController: UIViewController) {
-        let viewController = LocationsViewController()
-        viewController.modalPresentationStyle = .pageSheet
-        viewController.modalTransitionStyle = .coverVertical
-        let viewModel = LocationsViewModel.init(locations: [self.viewModel.location])
-        viewController.viewModel = viewModel
-        present(viewController, animated: true, completion: nil)
+    func locationFound(_ location: Location) {
+        viewModel = MainViewModel(location: location)
+        viewModel.mainViewModelDelegate = self
+        collectionView.reloadData()
+        tableView.reloadData()
+        navigationItem.title = viewModel.location?.city.name
+        weatherView.temperatureLabel.text = "\(viewModel.location?.list[0].main.temp.rounded() ?? 0)º"
+        weatherView.cloudnessLabel.text = viewModel.location?.list[0].weather[0].description.capitalizingFirstLetter()
+    }
+    
+    func updateViews() {
+        self.collectionView.reloadData()
+        self.tableView.reloadData()
+        navigationItem.title = viewModel.location?.city.name
+        weatherView.temperatureLabel.text = "\(viewModel.location?.list[0].main.temp.rounded() ?? 0)º"
+        weatherView.cloudnessLabel.text = viewModel.location?.list[0].weather[0].description.capitalizingFirstLetter()
     }
 }
+
+//MARK: TableView
 
 extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -129,7 +156,7 @@ extension MainViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "tableCellId", for: indexPath) as? TableViewCell else { fatalError("Unable to create cell!") }
-        cell.list = viewModel.location.list[indexPath.row*8]
+        cell.list = viewModel.location?.list[indexPath.row*8]
         return cell
     }
 }
@@ -139,6 +166,8 @@ extension MainViewController: UITableViewDelegate {
         return 80
     }
 }
+
+//MARK: CollectionView
 
 extension MainViewController: UICollectionViewDelegate {
     
@@ -153,7 +182,38 @@ extension MainViewController: UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCellId", for: indexPath) as? CollectionViewCell else {
             fatalError("Unable to create cell!")
         }
-        cell.list = viewModel.location.list[indexPath.row]
+        cell.list = viewModel.location?.list[indexPath.row]
         return cell
+    }
+}
+
+//MARK: LocationManager
+
+extension MainViewController: CLLocationManagerDelegate {
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error)
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        //updateViews
+        viewModel.getLocationByCoordinates(Double(manager.location?.coordinate.longitude ?? 0), latitude: Double(manager.location?.coordinate.latitude ?? 0))
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        switch status {
+        case .denied:
+            fatalError()
+        case .authorizedAlways:
+            viewModel.getLocationByCoordinates(Double(manager.location?.coordinate.longitude ?? 0), latitude: Double(manager.location?.coordinate.latitude ?? 0))
+        case .notDetermined:
+            fatalError()
+        case .restricted:
+            fatalError()
+        case .authorizedWhenInUse:
+            viewModel.getLocationByCoordinates(Double(manager.location?.coordinate.longitude ?? 0), latitude: Double(manager.location?.coordinate.latitude ?? 0))
+        @unknown default:
+            fatalError()
+        }
     }
 }

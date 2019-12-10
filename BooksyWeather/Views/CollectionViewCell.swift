@@ -13,7 +13,9 @@ class CollectionViewCell: UICollectionViewCell {
     var list: List? {
         didSet {
             timeLabel.text = getProperDateString(list?.dt_txt)
-            weatherIcon.load(url: URL.init(string: "http://openweathermap.org/img/w/" + (list?.weather[0].icon)! + ".png")!)
+            if let icon = list?.weather[0].icon, let url = URL.init(string: "http://openweathermap.org/img/w/" + icon + ".png") {
+                weatherIcon.load(url: url)
+            }
             tempLabel.text = "\(list?.main.temp.rounded() ?? 0)º"
         }
     }
@@ -55,9 +57,12 @@ class CollectionViewCell: UICollectionViewCell {
     private func getProperDateString(_ dateText: String?) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-mm-dd HH:mm:ss"
-        let date = dateFormatter.date(from: dateText!)!
-        dateFormatter.dateFormat = "HH:SS"
-        return dateFormatter.string(from: date)
+        if let dateText = dateText {
+            let date = dateFormatter.date(from: dateText)!
+            dateFormatter.dateFormat = "HH:SS"
+            return dateFormatter.string(from: date)
+        }
+        return ""
     }
     
     private func setupView() {

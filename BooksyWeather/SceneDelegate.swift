@@ -21,36 +21,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         self.window = UIWindow(windowScene: windowScene)
         let rootViewCotroller = MainViewController()
-        let locationManager = CLLocationManager()
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
-        locationManager.requestWhenInUseAuthorization()
-        // after showing the permission dialog, the program will continue executing the next line before the user has tap 'Allow' or 'Disallow'
-        
-        // if previously user has allowed the location permission, then request location
-        if(CLLocationManager.authorizationStatus() == .authorizedWhenInUse || CLLocationManager.authorizationStatus() == .authorizedAlways){
-            locationManager.requestLocation()
-        }
-        NetworkManager.shared().getWeatherByLocation(longtitude: (locationManager.location?.coordinate.longitude)!, latitude: (locationManager.location?.coordinate.latitude)!) { (location, error) in
-            if let error = error {
-                //display error
-                print(error)
-            } else if let location = location{
-                let array:[Location] = [location]
-                let encoder = JSONEncoder()
-                if let encoded = try? encoder.encode(array) {
-                    let userDefaults = UserDefaults.standard
-                    userDefaults.set(encoded, forKey: "savedLocations")
-                }
-                
-                let mainViewModel = MainViewModel(location: location)
-                rootViewCotroller.viewModel = mainViewModel
-                let navigationController = UINavigationController(rootViewController: rootViewCotroller)
-                       navigationController.navigationBar.isTranslucent = false
-                       self.window?.rootViewController = navigationController
-                       self.window?.makeKeyAndVisible()
-            }
-        }
+        let navigationController = UINavigationController(rootViewController: rootViewCotroller)
+        navigationController.navigationBar.isTranslucent = false
+        self.window?.rootViewController = navigationController
+        self.window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

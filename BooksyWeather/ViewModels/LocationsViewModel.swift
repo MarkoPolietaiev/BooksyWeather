@@ -21,7 +21,7 @@ class LocationsViewModel {
     
     var locations: [Location] = []
     
-    init(locations: [Location]) {
+    init() {
         if let savedLocations = UserDefaults.standard.object(forKey: "savedLocations") as? Data {
             let decoder = JSONDecoder()
             if let loadedLocations = try? decoder.decode([Location].self, from: savedLocations) {
